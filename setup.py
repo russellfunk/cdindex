@@ -15,7 +15,7 @@ setup(name="cdindex",
     url="http://www.cdindex.info",
     license="GNU General Public License (GPL)",
     ext_modules=[
-                  Extension("cdindex/_cdindex",
+                  Extension("cdindex._cdindex",
                             ["src/cdindex.c", 
                              "src/graph.c", 
                              "src/utility.c", 
