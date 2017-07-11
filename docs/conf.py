@@ -16,7 +16,7 @@ import sys
 import os
 
 import sys
-from mock import MagicMock
+from mock import Mock as MagicMock
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
