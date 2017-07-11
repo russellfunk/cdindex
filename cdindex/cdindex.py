@@ -10,9 +10,11 @@ __copyright__ = "Copyright (C) 2017"
 import math
 import random
 import itertools
+import os
 
 # custom modules
-import _cdindex
+if os.environ["READTHEDOCS"] is False:
+  import _cdindex
 import time_utilities
 
 class Graph:
