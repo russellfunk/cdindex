@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cdindex.cdindex &mdash; cdindex 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="cdindex 1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> cdindex
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">cdindex</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>cdindex.cdindex</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cdindex.cdindex</h1><div class="highlight"><pre>
+<span class="c">#!/usr/local/bin/python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;cdindex.py: This script is an interface for the c extension _cdindex.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Russell J. Funk&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&quot;Copyright (C) 2017&quot;</span>
+
+<span class="c"># built in modules</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="c"># custom modules</span>
+<span class="kn">import</span> <span class="nn">_cdindex</span>
+<span class="kn">import</span> <span class="nn">time_utilities</span>
+
+<div class="viewcode-block" id="Graph"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph">[docs]</a><span class="k">class</span> <span class="nc">Graph</span><span class="p">:</span>
+  <span class="sd">&quot;&quot;&quot;Create a graph.</span>
+
+<span class="sd">  This class defines a graph data structure on which to compute the cdindex and other</span>
+<span class="sd">  functions that are made available through the module.</span>
+<span class="sd">  &quot;&quot;&quot;</span>  
+  
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="o">=</span><span class="p">[],</span> <span class="n">edges</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize a new graph.</span>
+
+<span class="sd">    Create a new graph for analysis. Vertices and edges can be added either when the graph</span>
+<span class="sd">    is initialized, or later. </span>
+<span class="sd">    </span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    vs = [{&quot;name&quot;: &quot;0Z&quot;, &quot;time&quot;: datetime.datetime(1992, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;1Z&quot;, &quot;time&quot;: datetime.datetime(1992, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;2Z&quot;, &quot;time&quot;: datetime.datetime(1993, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;3Z&quot;, &quot;time&quot;: datetime.datetime(1993, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;4Z&quot;, &quot;time&quot;: datetime.datetime(1995, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;5Z&quot;, &quot;time&quot;: datetime.datetime(1997, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;6Z&quot;, &quot;time&quot;: datetime.datetime(1998, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;7Z&quot;, &quot;time&quot;: datetime.datetime(1999, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;8Z&quot;, &quot;time&quot;: datetime.datetime(1999, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;9Z&quot;, &quot;time&quot;: datetime.datetime(1998, 1, 1)},</span>
+<span class="sd">          {&quot;name&quot;: &quot;10Z&quot;, &quot;time&quot;: datetime.datetime(1997, 1, 1)}]</span>
+
+<span class="sd">    es = [{&quot;source&quot;: &quot;4Z&quot;, &quot;target&quot;: &quot;2Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;4Z&quot;, &quot;target&quot;: &quot;0Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;4Z&quot;, &quot;target&quot;: &quot;1Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;4Z&quot;, &quot;target&quot;: &quot;3Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;5Z&quot;, &quot;target&quot;: &quot;2Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;6Z&quot;, &quot;target&quot;: &quot;2Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;6Z&quot;, &quot;target&quot;: &quot;4Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;7Z&quot;, &quot;target&quot;: &quot;4Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;8Z&quot;, &quot;target&quot;: &quot;4Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;9Z&quot;, &quot;target&quot;: &quot;4Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;9Z&quot;, &quot;target&quot;: &quot;1Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;9Z&quot;, &quot;target&quot;: &quot;3Z&quot;},</span>
+<span class="sd">          {&quot;source&quot;: &quot;10Z&quot;, &quot;target&quot;: &quot;4Z&quot;}]</span>
+
+<span class="sd">    graph = cdindex.Graph(vertices=vs, edges=es)</span>
+<span class="sd">    </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vertices :</span>
+<span class="sd">      List of vertices with names and timestamps, e.g., </span>
+<span class="sd">      [{&quot;name&quot;: &quot;0Z&quot;, &quot;time&quot;: datetime.datetime(1992, 1, 1)}].</span>
+<span class="sd">    edges : </span>
+<span class="sd">      List of edges with sources and targets, e.g., [{&quot;source&quot;: &quot;4Z&quot;, &quot;target&quot;: &quot;2Z&quot;}].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_id_crosswalk</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c"># add vertices</span>
+    <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">vertex</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">],</span> <span class="n">vertex</span><span class="p">[</span><span class="s">&quot;time&quot;</span><span class="p">])</span>
+
+    <span class="c"># add edges</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="s">&quot;source&quot;</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="s">&quot;target&quot;</span><span class="p">])</span>
+    
+<div class="viewcode-block" id="Graph.add_vertex"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.add_vertex">[docs]</a>  <span class="k">def</span> <span class="nf">add_vertex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a new vertex to the graph.</span>
+
+<span class="sd">    This function adds a new vertex to the graph, given a name and timestamp.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+<span class="sd">    t : int</span>
+<span class="sd">      The vertex timestamp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vertex_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcount</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">:</span>
+     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Vertex already added to graph&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vertex_id</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_id_crosswalk</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">long</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Time (t) of vertex must be an integer or long&quot;</span><span class="p">)</span>
+
+    <span class="c"># add the vertex</span>
+    <span class="n">_cdindex</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span> <span class="n">vertex_id</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.add_edge"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.add_edge">[docs]</a>  <span class="k">def</span> <span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">target_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a new edge to the graph.</span>
+
+<span class="sd">    This function adds a new edge to the graph, given a source name and target</span>
+<span class="sd">    name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_name :</span>
+<span class="sd">      The source vertex name.</span>
+<span class="sd">    target_name :</span>
+<span class="sd">      The target vertex timestamp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">source_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span>
+        <span class="ow">or</span> <span class="n">target_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;One or more vertices are not in the graph&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">target_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">source_name</span><span class="p">)):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The edge being added is already in the graph&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">_cdindex</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">source_name</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">target_name</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Graph.vcount"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.vcount">[docs]</a>  <span class="k">def</span> <span class="nf">vcount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the number of vertices in the graph.</span>
+
+<span class="sd">    This function returns the number of vertices in the graph. Note that time is</span>
+<span class="sd">    not taken into account. The total count of vertices are returned regardless</span>
+<span class="sd">    of when they appear in the graph.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">      The number of vertices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vcount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">_c_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the ids of the vertices in the graph from the C extension.</span>
+
+<span class="sd">    This function returns a list of vertices in the graph. Rather than returning</span>
+<span class="sd">    names, the id numbers from the C extension are returned. This function is</span>
+<span class="sd">    not useful other than for internal purpuses. Note that time is not taken</span>
+<span class="sd">    into account. Vertices are returned regardless of when they appear in the</span>
+<span class="sd">    graph.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">      The vertices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Graph.vertices"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.vertices">[docs]</a>  <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the vertices in the graph.</span>
+
+<span class="sd">    This function returns a list of vertices in the graph. Note that time is not</span>
+<span class="sd">    taken into account. Vertices are returned regardless of when they appear in</span>
+<span class="sd">    the graph.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">      The vertices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Graph.ecount"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.ecount">[docs]</a>  <span class="k">def</span> <span class="nf">ecount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the number of edges in the graph.</span>
+
+<span class="sd">    This function returns the number of edges in the graph. Note that time is</span>
+<span class="sd">    not taken into account. The total count of edges are returned regardless of</span>
+<span class="sd">    when they appear in the graph.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">      The number of edges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_ecount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.in_degree"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.in_degree">[docs]</a>  <span class="k">def</span> <span class="nf">in_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the in degree of the focal vertex.</span>
+
+<span class="sd">    Given a vertex, this function returns its in degree centrality, i.e., the</span>
+<span class="sd">    number of other vertices in the graph that cite the focal vertex. Note that</span>
+<span class="sd">    time is not taken into account. The function counts edges regardless of when</span>
+<span class="sd">    they appear in the graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">      The in degree centrality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertex_in_degree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Graph.in_edges"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.in_edges">[docs]</a>  <span class="k">def</span> <span class="nf">in_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the in edges of the focal vertex.</span>
+
+<span class="sd">    Given a vertex, this function returns its in edges, i.e., the other</span>
+<span class="sd">    vertices in the graph cited by the focal vertex. Note that time is not taken</span>
+<span class="sd">    into account. The function returns edges regardless of when they appear in</span>
+<span class="sd">    the graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">      The in edges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_edges_ids</span> <span class="o">=</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertex_in_edges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertex_id_crosswalk</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">vertex_id</span> <span class="ow">in</span> <span class="n">in_edges_ids</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Graph.out_degree"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.out_degree">[docs]</a>  <span class="k">def</span> <span class="nf">out_degree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the out degree of the focal vertex.</span>
+
+<span class="sd">    Given a vertex, this function returns its out degree centrality, i.e., the</span>
+<span class="sd">    number of other vertices in the graph cited by the focal vertex. Note that</span>
+<span class="sd">    time is not taken into account. The function counts edges regardless of when</span>
+<span class="sd">    they appear in the graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">      The out degree centrality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertex_out_degree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Graph.out_edges"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.out_edges">[docs]</a>  <span class="k">def</span> <span class="nf">out_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the out edges of the focal vertex.</span>
+
+<span class="sd">    Given a vertex, this function returns its out edges, i.e., the other</span>
+<span class="sd">    vertices in the graph cited by the focal vertex. Note that time is not taken</span>
+<span class="sd">    into account. The function returns edges regardless of when they appear in</span>
+<span class="sd">    the graph.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">      The out edges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out_edges_ids</span> <span class="o">=</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertex_out_edges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertex_id_crosswalk</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">vertex_id</span> <span class="ow">in</span> <span class="n">out_edges_ids</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Graph.timestamp"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.timestamp">[docs]</a>  <span class="k">def</span> <span class="nf">timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the timestamp of the focal vertex.</span>
+
+<span class="sd">    Given a vertex, this function returns its timestamp.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name :</span>
+<span class="sd">      The vertex name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">      The timestamp.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">get_vertex_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Graph.cdindex"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.cdindex">[docs]</a>  <span class="k">def</span> <span class="nf">cdindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">t_delta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the CD index.</span>
+
+<span class="sd">    This function computes the CD index for a specified vertex at a given</span>
+<span class="sd">    t_delta, where t_delta is an integer that gives the positive distance in</span>
+<span class="sd">    time from the timestamp of the focal node when the index should be</span>
+<span class="sd">    calculated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t_delta : int</span>
+<span class="sd">      A time delta.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    double</span>
+<span class="sd">      The CD index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t_delta</span><span class="p">,</span> <span class="p">(</span><span class="nb">long</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Time delta (t_delta) must be an integer or long&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">cdindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">],</span>
+                            <span class="n">t_delta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.mcdindex"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.Graph.mcdindex">[docs]</a>  <span class="k">def</span> <span class="nf">mcdindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">t_delta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the mCD index.</span>
+
+<span class="sd">    This function computes the mCD index for a specified vertex at a given</span>
+<span class="sd">    t_delta, where t_delta is an integer that gives the positive distance in</span>
+<span class="sd">    time from the timestamp of the focal node when the index should be</span>
+<span class="sd">    calculated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t_delta : int</span>
+<span class="sd">      A time delta.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    double</span>
+<span class="sd">      The mCD index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t_delta</span><span class="p">,</span> <span class="p">(</span><span class="nb">long</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Time delta (t_delta) must be an integer or long&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">mcdindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_name_crosswalk</span><span class="p">[</span><span class="n">name</span><span class="p">],</span>
+                             <span class="n">t_delta</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">_is_graph_sane</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test graph sanity.</span>
+
+<span class="sd">    Run tests to verify the internal graph storage structure. Not really a</span>
+<span class="sd">    useful function other than for checking possible issues with the module.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">      True if successful, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cdindex</span><span class="o">.</span><span class="n">_is_graph_sane</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RandomGraph"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.RandomGraph">[docs]</a><span class="k">class</span> <span class="nc">RandomGraph</span><span class="p">(</span><span class="n">Graph</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Create a random graph.</span>
+
+<span class="sd">  This class generates a random graph that can be used for testing the cdindex and other</span>
+<span class="sd">  functions that are made available through the module.</span>
+<span class="sd">  &quot;&quot;&quot;</span>  
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generations</span><span class="o">=</span><span class="p">[],</span> <span class="n">edge_fraction</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize a new random graph.</span>
+
+<span class="sd">    Create a new random graph for analysis.</span>
+<span class="sd">    </span>
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    graph = cdindex.RandomGraph(generations=(2,3,4,5,6,7,7,9), edge_fraction=1)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    generations :</span>
+<span class="sd">      List of discrete &quot;generations&quot;, i.e., timestamps for each vertex.</span>
+<span class="sd">    edge_fraction : </span>
+<span class="sd">      The fraction of edges that should be present in the graph.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># build vertex list</span>
+    <span class="n">vertices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">generation_id</span><span class="p">,</span> <span class="n">generation_size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generations</span><span class="p">):</span>
+      <span class="n">new_vertices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">generation_size</span><span class="p">)</span>
+      <span class="n">vertices</span><span class="o">.</span><span class="n">extend</span><span class="p">([{</span><span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;v&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;g&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation_id</span><span class="p">),</span> 
+                        <span class="s">&quot;time&quot;</span><span class="p">:</span> <span class="n">generation_id</span><span class="p">}</span> <span class="k">for</span> <span class="n">nv</span> <span class="ow">in</span> <span class="n">new_vertices</span><span class="p">])</span>
+
+    <span class="c"># build edge list</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">possible_edges</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">possible_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">possible_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;time&quot;</span><span class="p">]:</span>
+        <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;source&quot;</span><span class="p">:</span> <span class="n">possible_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&quot;name&quot;</span><span class="p">],</span> 
+                      <span class="s">&quot;target&quot;</span><span class="p">:</span> <span class="n">possible_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;name&quot;</span><span class="p">]})</span>
+
+    <span class="c"># pull fraction of edges to keep</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">edge_fraction</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)))]</span>
+
+    <span class="c"># initialize graph</span>
+    <span class="n">Graph</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../cdindex.cdindex.html#cdindex.cdindex.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span></div>
+
+  <span class="k">return</span> <span class="bp">None</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Russell J. Funk.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
