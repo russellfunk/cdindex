@@ -67,9 +67,9 @@ Create a graph with some dummy data and compute the CD index::
     >>> for edge in pyedges:
           graph.add_edge(edge["source"], edge["target"])
 
-    >>> graph.cdindex(vertex, int(datetime.timedelta(days=1825).total_seconds())
+    >>> graph.cdindex("5Z", int(datetime.timedelta(days=1825).total_seconds())
 
-    >>> graph.mcdindex(vertex, int(datetime.timedelta(days=1825).total_seconds())
+    >>> graph.mcdindex("5Z", int(datetime.timedelta(days=1825).total_seconds())
 
 Bugs
 ----
