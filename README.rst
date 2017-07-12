@@ -8,9 +8,9 @@ cdindex
 cdindex is a Python package, written in C, for computing the CD index and other dynamic 
 measures on evolving directed graphs.
 
-- **Website:** http://networkx.github.io
-- **Source:** https://github.com/networkx/networkx
-- **Bug reports:** https://github.com/networkx/networkx/issues
+- **Website:** http://www.cdindex.info
+- **Source:** https://github.com/russellfunk/cdindex
+- **Bug reports:** <russellfunk@gmail.com>
 
 Install
 -------
