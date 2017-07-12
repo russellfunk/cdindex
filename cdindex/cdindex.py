@@ -13,7 +13,7 @@ import itertools
 import os
 
 # custom modules
-if os.environ["READTHEDOCS"] is False:
+if "READTHEDOCS" not in os.environ:
   import _cdindex
 import time_utilities
 

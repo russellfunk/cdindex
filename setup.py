@@ -11,6 +11,7 @@ from setuptools import setup, Extension, find_packages
 
 setup(name="cdindex",
     version="1.0.0",
+    description="Package for computing the cdindex.",
     author="Russell J. Funk",
     author_email="russellfunk@gmail.com",
     url="http://www.cdindex.info",
