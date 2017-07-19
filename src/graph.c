@@ -98,14 +98,14 @@ void add_vertex(Graph *graph, int id, int timestamp) {
  * \param target_id The target vertex id.
  */
 void add_edge(Graph *graph, int source_id, int target_id) {
+
   /* confirm vertices are in graph */
-  /*
   if (source_id >= graph->vcount || target_id >= graph->vcount) {
     raise_error(2);
   }
-  */
 
   /* confirm vertices are in graph */
+  /*
   int vs_ids[graph->vcount]; 
   for (int i = 0; i < graph->vcount; i++) {
      vs_ids[i] = graph->vs[i].id;
@@ -113,6 +113,8 @@ void add_edge(Graph *graph, int source_id, int target_id) {
   if (!in_int_array(vs_ids, graph->vcount, source_id) || !in_int_array(vs_ids, graph->vcount, target_id)) {
     raise_error(2);
   } 
+  */
+  
   /* confirm edge is not already in graph */
   else if (in_int_array(graph->vs[source_id].out_edges, graph->vs[source_id].out_degree, target_id)) {
     raise_error(3);
