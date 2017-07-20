@@ -104,8 +104,7 @@ long long int iindex(Graph *graph, long long int id, long long int time_delta){
    long long int mt_count = 0;
    for (long long int i = 0; i < graph->vs[id].in_degree; i++) {
      long long int in_edge_i = graph->vs[id].in_edges[i];
-     if (graph->vs[in_edge_i].timestamp > graph->vs[id].timestamp &&
-         graph->vs[in_edge_i].timestamp <= (graph->vs[id].timestamp + time_delta)) {
+     if (graph->vs[in_edge_i].timestamp <= (graph->vs[id].timestamp + time_delta)) {
        mt_count++;
        }
      }
