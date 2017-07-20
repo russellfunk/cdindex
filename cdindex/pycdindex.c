@@ -345,7 +345,7 @@ static PyMethodDef CDIndexMethods[] = {
   {"get_vertex_out_edges", py_get_vertex_out_edges, METH_VARARGS, "Get the out edges of a vertex"},
   {"cdindex", py_cdindex, METH_VARARGS, "Compute the CD index"},
   {"mcdindex", py_mcdindex, METH_VARARGS, "Compute the mCD index"},
-  {"iindex", py_mcdindex, METH_VARARGS, "Compute the I index"},
+  {"iindex", py_iindex, METH_VARARGS, "Compute the I index"},
   { NULL, NULL, 0, NULL}
 };
 
