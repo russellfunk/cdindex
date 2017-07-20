@@ -30,7 +30,7 @@ def timestamp_from_datetime(dt):
   """
   return calendar.timegm(dt.utctimetuple())
 
-def datetime_from_timestamp(t):
+def datetime_from_timestamp(ts):
   """Convert a Unix timestamp to a datetime.
 
   Given a Unix timestamp, this function returns a datetime. Input is assumed to
@@ -40,7 +40,7 @@ def datetime_from_timestamp(t):
 
   Parameters
   ----------
-  t : int
+  ts : int
     A Unix timestamp.
 
   Returns

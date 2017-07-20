@@ -29,7 +29,7 @@ void add_to_int_array(int **array, int sizeof_array, int value, bool add_memory)
 
 /* function prototypes for graph.c */
 bool is_graph_sane(Graph *graph); 
-void add_vertex(Graph *graph, int id, int timestamp);
+void add_vertex(Graph *graph, int id, long long int timestamp);
 void add_edge(Graph *graph, int source_id, int target_id);
 void free_graph(Graph *graph);
 

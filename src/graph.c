@@ -61,7 +61,7 @@ bool is_graph_sane(Graph *graph) {
  * \param id The new vertex id.
  * \param timestamp The new vertex timestamp.
  */
-void add_vertex(Graph *graph, int id, int timestamp) {
+void add_vertex(Graph *graph, int id, long long int timestamp) {
 
   /* allocate memory for a vertex */
   Vertex *tmp;
