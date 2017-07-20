@@ -82,12 +82,12 @@ static PyObject *py_free_graph(PyObject *self, PyObject *args) {
  * Add a vertex to the graph                                                   *
  ******************************************************************************/
 static PyObject *py_add_vertex(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
   long long int TIMESTAMP;
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"OiL",&py_g, &ID, &TIMESTAMP))
+  if (!PyArg_ParseTuple(args,"OLL",&py_g, &ID, &TIMESTAMP))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
@@ -100,11 +100,11 @@ static PyObject *py_add_vertex(PyObject *self, PyObject *args) {
  * Add an edge to the graph                                                    *
  ******************************************************************************/
 static PyObject *py_add_edge(PyObject *self, PyObject *args) {
-  int SOURCE_ID, TARGET_ID;
+  long long int SOURCE_ID, TARGET_ID;
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"Oii",&py_g, &SOURCE_ID, &TARGET_ID))
+  if (!PyArg_ParseTuple(args,"OLL",&py_g, &SOURCE_ID, &TARGET_ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
@@ -126,7 +126,7 @@ static PyObject *py_get_vcount(PyObject *self, PyObject *args) {
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
-  return Py_BuildValue("i", g->vcount);
+  return Py_BuildValue("L", g->vcount);
 }
 
 /*******************************************************************************
@@ -144,8 +144,8 @@ static PyObject *py_get_vertices(PyObject *self, PyObject *args) {
 
   PyObject *vs_list = PyList_New(g->vcount);
 
-  for (int i = 0; i < g->vcount; i++) {
-    id = Py_BuildValue("i", g->vs[i].id);
+  for (long long int i = 0; i < g->vcount; i++) {
+    id = Py_BuildValue("L", g->vs[i].id);
     PyList_SetItem(vs_list, i, id);
   }
 
@@ -165,19 +165,19 @@ static PyObject *py_get_ecount(PyObject *self, PyObject *args) {
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
-  return Py_BuildValue("i", g->ecount);
+  return Py_BuildValue("L", g->ecount);
 }
 
 /*******************************************************************************
  * Get a vertex timestamp                                                      *
  ******************************************************************************/
 static PyObject *py_get_vertex_timestamp(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
 
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"Oi",&py_g, &ID))
+  if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
@@ -189,17 +189,17 @@ static PyObject *py_get_vertex_timestamp(PyObject *self, PyObject *args) {
  * Get a vertex in degree                                                      *
  ******************************************************************************/
 static PyObject *py_get_vertex_in_degree(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
 
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"Oi",&py_g, &ID))
+  if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
-  return Py_BuildValue("i", g->vs[ID].in_degree);
+  return Py_BuildValue("L", g->vs[ID].in_degree);
 }
 
 /*******************************************************************************
@@ -207,19 +207,19 @@ static PyObject *py_get_vertex_in_degree(PyObject *self, PyObject *args) {
  ******************************************************************************/
 static PyObject *py_get_vertex_in_edges(PyObject *self, PyObject *args) {
 
-  int ID;
+  long long int ID;
   Graph *g;
   PyObject *py_g, *source_id;
 
-  if (!PyArg_ParseTuple(args,"Oi",&py_g, &ID))
+  if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
   PyObject *vs_list = PyList_New(g->vs[ID].in_degree);
 
-  for (int i = 0; i < g->vs[ID].in_degree; i++) {
-    source_id = Py_BuildValue("i", g->vs[ID].in_edges[i]);
+  for (long long int i = 0; i < g->vs[ID].in_degree; i++) {
+    source_id = Py_BuildValue("L", g->vs[ID].in_edges[i]);
     PyList_SetItem(vs_list, i, source_id);
   }
 
@@ -230,17 +230,17 @@ static PyObject *py_get_vertex_in_edges(PyObject *self, PyObject *args) {
  * Get a vertex out degree                                                     *
  ******************************************************************************/
 static PyObject *py_get_vertex_out_degree(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
 
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"Oi",&py_g, &ID))
+  if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
-  return Py_BuildValue("i", g->vs[ID].out_degree);
+  return Py_BuildValue("L", g->vs[ID].out_degree);
 }
 
 /*******************************************************************************
@@ -248,19 +248,19 @@ static PyObject *py_get_vertex_out_degree(PyObject *self, PyObject *args) {
  ******************************************************************************/
 static PyObject *py_get_vertex_out_edges(PyObject *self, PyObject *args) {
 
-  int ID;
+  long long int ID;
   Graph *g;
   PyObject *py_g, *target_id;
 
-  if (!PyArg_ParseTuple(args,"Oi",&py_g, &ID))
+  if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
   PyObject *vs_list = PyList_New(g->vs[ID].out_degree);
 
-  for (int i = 0; i < g->vs[ID].out_degree; i++) {
-    target_id = Py_BuildValue("i", g->vs[ID].out_edges[i]);
+  for (long long int i = 0; i < g->vs[ID].out_degree; i++) {
+    target_id = Py_BuildValue("L", g->vs[ID].out_edges[i]);
     PyList_SetItem(vs_list, i, target_id);
   }
 
@@ -271,14 +271,14 @@ static PyObject *py_get_vertex_out_edges(PyObject *self, PyObject *args) {
  * Compute the CD index                                                        *
  ******************************************************************************/
 static PyObject *py_cdindex(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
   long long int TIMESTAMP;
 
   double result;
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"OiL",&py_g, &ID, &TIMESTAMP))
+  if (!PyArg_ParseTuple(args,"OLL",&py_g, &ID, &TIMESTAMP))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
@@ -291,13 +291,13 @@ static PyObject *py_cdindex(PyObject *self, PyObject *args) {
  * Compute the mCD index                                                       *
  ******************************************************************************/
 static PyObject *py_mcdindex(PyObject *self, PyObject *args) {
-  int ID;
+  long long int ID;
   long long int TIMESTAMP;
   double result;
   Graph *g;
   PyObject *py_g;
 
-  if (!PyArg_ParseTuple(args,"OiL",&py_g, &ID, &TIMESTAMP))
+  if (!PyArg_ParseTuple(args,"OLL",&py_g, &ID, &TIMESTAMP))
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
@@ -305,6 +305,26 @@ static PyObject *py_mcdindex(PyObject *self, PyObject *args) {
   result = mcdindex(g, ID, TIMESTAMP);
   return Py_BuildValue("d", result);
 }
+
+/*******************************************************************************
+ * Compute the I index                                                       *
+ ******************************************************************************/
+static PyObject *py_iindex(PyObject *self, PyObject *args) {
+  long long int ID;
+  long long int TIMESTAMP;
+  double result;
+  Graph *g;
+  PyObject *py_g;
+
+  if (!PyArg_ParseTuple(args,"OLL",&py_g, &ID, &TIMESTAMP))
+    return NULL;
+  if (!(g = PyGraph_AsGraph(py_g)))
+    return NULL;
+
+  result = iindex(g, ID, TIMESTAMP);
+  return Py_BuildValue("d", result);
+}
+
 
 /*******************************************************************************
  * Module method table                                                         *
@@ -325,6 +345,7 @@ static PyMethodDef CDIndexMethods[] = {
   {"get_vertex_out_edges", py_get_vertex_out_edges, METH_VARARGS, "Get the out edges of a vertex"},
   {"cdindex", py_cdindex, METH_VARARGS, "Compute the CD index"},
   {"mcdindex", py_mcdindex, METH_VARARGS, "Compute the mCD index"},
+  {"iindex", py_mcdindex, METH_VARARGS, "Compute the I index"},
   { NULL, NULL, 0, NULL}
 };
 

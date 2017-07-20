@@ -339,6 +339,31 @@ class Graph:
                              self._vertex_name_crosswalk[name],
                              t_delta)
 
+  def iindex(self, name, t_delta):
+    """Compute the I index.
+
+    This function computes the I index for a specified vertex at a given
+    t_delta, where t_delta is an integer that gives the positive distance in
+    time from the timestamp of the focal node when the index should be
+    calculated. The I index is the in degree of the focal node at time t.
+
+    Parameters
+    ----------
+    t_delta : int
+      A time delta.
+
+    Returns
+    -------
+    double
+      The I index.
+    """
+    if isinstance(t_delta, (long, int)) is False:
+      raise ValueError("Time delta (t_delta) must be an integer or long")
+    return _cdindex.iindex(self._graph,
+                             self._vertex_name_crosswalk[name],
+                             t_delta)
+
+
   def _is_graph_sane(self):
     """Test graph sanity.
 

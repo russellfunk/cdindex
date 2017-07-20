@@ -47,9 +47,9 @@ void raise_error(int code) {
  *
  * \return Whether value is in the array.
  */
-bool in_int_array(int *array, int sizeof_array, int value) {
+bool in_int_array(long long int *array, long long int sizeof_array, long long int value) {
   bool in_array = false;
-  for (int i = 0; i < sizeof_array; i++) {
+  for (long long int i = 0; i < sizeof_array; i++) {
     if (array[i] == value) {
       in_array = true;
     }
@@ -66,10 +66,10 @@ bool in_int_array(int *array, int sizeof_array, int value) {
  * \param value The value to add to the array.
  * \param add_memory Whether to add memory to the array.
  */
-void add_to_int_array(int **array, int sizeof_array, int value, bool add_memory) {
-int *tmp;
+void add_to_int_array(long long int **array, long long int sizeof_array, long long int value, bool add_memory) {
+long long int *tmp;
   if (add_memory) {
-    tmp = realloc(*array, (sizeof_array + 1) * sizeof(int));
+    tmp = realloc(*array, (sizeof_array + 1) * sizeof(long long int));
     if (tmp==NULL) {
       raise_error(0);
     }

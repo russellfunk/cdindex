@@ -30,13 +30,13 @@
  *
  * \return The value of the CD index.
  */
-double cdindex(Graph *graph, int id, long long int time_delta){
+double cdindex(Graph *graph, long long int id, long long int time_delta){
 
    /* Build a list of "it" vertices that are "in_edges" of the focal vertex's
      "out_edges" as of timestamp t. Vertices in the list are unique. */
 
-   int it_count = 0;
-   int *it = malloc(sizeof(int));
+   long long int it_count = 0;
+   long long int *it = malloc(sizeof(long long int));
 
    /* check for malloc problems */
    if (it==NULL) {
@@ -44,13 +44,13 @@ double cdindex(Graph *graph, int id, long long int time_delta){
    }
 
    /* define i for multiple loops */
-   int i;
+   long long int i;
 
    /* add unique "in_edges" of focal vertex "out_edges" */
    for (i = 0; i < graph->vs[id].out_degree; i++) {
-     int out_edge_i = graph->vs[id].out_edges[i];
-     for (int j = 0; j < graph->vs[out_edge_i].in_degree; j++) {
-       int out_edge_i_in_edge_j = graph->vs[out_edge_i].in_edges[j];
+     long long int out_edge_i = graph->vs[id].out_edges[i];
+     for (long long int j = 0; j < graph->vs[out_edge_i].in_degree; j++) {
+       long long int out_edge_i_in_edge_j = graph->vs[out_edge_i].in_edges[j];
        if (graph->vs[out_edge_i_in_edge_j].timestamp > graph->vs[id].timestamp &&
            graph->vs[out_edge_i_in_edge_j].timestamp < (graph->vs[id].timestamp + time_delta) &&
            !in_int_array(it, it_count, out_edge_i_in_edge_j)) {
@@ -62,7 +62,7 @@ double cdindex(Graph *graph, int id, long long int time_delta){
 
    /* add unique "in_edges" of focal vertex */
    for (i = 0; i < graph->vs[id].in_degree; i++) {
-     int in_edge_i = graph->vs[id].in_edges[i];
+     long long int in_edge_i = graph->vs[id].in_edges[i];
      if (graph->vs[in_edge_i].timestamp > graph->vs[id].timestamp &&
          graph->vs[in_edge_i].timestamp < (graph->vs[id].timestamp + time_delta) &&
          !in_int_array(it, it_count, in_edge_i)) {
@@ -74,9 +74,9 @@ double cdindex(Graph *graph, int id, long long int time_delta){
   /* compute the cd index */
   double sum_i = 0.0;
   for (i = 0; i < it_count; i++) {
-    int f_it = in_int_array(graph->vs[it[i]].out_edges, graph->vs[it[i]].out_degree, id);
-    int b_it = 0;
-    for (int j = 0; j < graph->vs[it[i]].out_degree; j++) {
+    long long int f_it = in_int_array(graph->vs[it[i]].out_edges, graph->vs[it[i]].out_degree, id);
+    long long int b_it = 0;
+    for (long long int j = 0; j < graph->vs[it[i]].out_degree; j++) {
       if (in_int_array(graph->vs[id].out_edges, graph->vs[id].out_degree, graph->vs[it[i]].out_edges[j])) {
         b_it = 1;
       }
@@ -89,18 +89,45 @@ double cdindex(Graph *graph, int id, long long int time_delta){
 }
 
 /**
+ * \function iindex
+ * \brief Computes the I Index (i.e., the in degree of the focal vertex at time t).
+ *
+ * \param graph The input graph.
+ * \param id The focal vertex id.
+ * \param time_delta Time beyond stamp of focal vertex to consider in computing the measure.
+ *
+ * \return The value of the I index.
+ */
+long long int iindex(Graph *graph, long long int id, long long int time_delta){
+
+   /* count mt vertices that are "in_edges" of the focal vertex as of timestamp t. */
+   long long int mt_count = 0;
+   for (long long int i = 0; i < graph->vs[id].in_degree; i++) {
+     long long int in_edge_i = graph->vs[id].in_edges[i];
+     if (graph->vs[in_edge_i].timestamp > graph->vs[id].timestamp &&
+         graph->vs[in_edge_i].timestamp < (graph->vs[id].timestamp + time_delta)) {
+       mt_count++;
+       }
+     }
+
+  return mt_count;
+}
+
+/**
  * \function mcdindex
  * \brief Computes the mCD Index.
  *
  * \param graph The input graph.
  * \param id The focal vertex id.
- * \param time_delta Time beyond stamp of focal vertex to consider in measure.
+ * \param time_delta Time beyond stamp of focal vertex to consider in computing the measure.
  *
  * \return The value of the mCD index.
  */
-double mcdindex(Graph *graph, int id, long long int time_delta){
+double mcdindex(Graph *graph, long long int id, long long int time_delta){
 
   double cdindex_value = cdindex(graph, id, time_delta);
-  return cdindex_value * graph->vs[id].in_degree;
+  long long int iindex_value = iindex(graph, id, time_delta);
+
+  return cdindex_value * iindex_value;
 
 }

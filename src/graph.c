@@ -39,7 +39,7 @@ bool is_graph_sane(Graph *graph) {
   else {
     /* vertex ids should be sequential */
     if (graph->vcount > 1) {
-			for (int i = 1; i < graph->vcount; i++) {
+			for (long long int i = 1; i < graph->vcount; i++) {
 	      if (graph->vs[i-1].id + 1 != graph->vs[i].id) {
 					sane = false;
 				}
@@ -61,7 +61,7 @@ bool is_graph_sane(Graph *graph) {
  * \param id The new vertex id.
  * \param timestamp The new vertex timestamp.
  */
-void add_vertex(Graph *graph, int id, long long int timestamp) {
+void add_vertex(Graph *graph, long long int id, long long int timestamp) {
 
   /* allocate memory for a vertex */
   Vertex *tmp;
@@ -97,7 +97,7 @@ void add_vertex(Graph *graph, int id, long long int timestamp) {
  * \param source_id The source vertex id.
  * \param target_id The target vertex id.
  */
-void add_edge(Graph *graph, int source_id, int target_id) {
+void add_edge(Graph *graph, long long int source_id, long long int target_id) {
 
   /* confirm vertices are in graph */
   if (source_id >= graph->vcount || target_id >= graph->vcount) {
@@ -106,8 +106,8 @@ void add_edge(Graph *graph, int source_id, int target_id) {
 
   /* confirm vertices are in graph */
   /*
-  int vs_ids[graph->vcount]; 
-  for (int i = 0; i < graph->vcount; i++) {
+  long long int vs_ids[graph->vcount]; 
+  for (long long int i = 0; i < graph->vcount; i++) {
      vs_ids[i] = graph->vs[i].id;
   }
   if (!in_int_array(vs_ids, graph->vcount, source_id) || !in_int_array(vs_ids, graph->vcount, target_id)) {
@@ -127,13 +127,13 @@ void add_edge(Graph *graph, int source_id, int target_id) {
 
     /* allocate memory for source_id out_edge record if needed */
     if (graph->vs[source_id].out_degree == 0) {
-      graph->vs[source_id].out_edges = malloc(sizeof(int));
+      graph->vs[source_id].out_edges = malloc(sizeof(long long int));
       reallocate_out_edges = false;
     }
 
     /* allocate memory for target_id in_edge record if needed */
     if (graph->vs[target_id].in_degree == 0) {
-      graph->vs[target_id].in_edges = malloc(sizeof(int));
+      graph->vs[target_id].in_edges = malloc(sizeof(long long int));
       reallocate_in_edges = false;
     }
 
@@ -163,7 +163,7 @@ void add_edge(Graph *graph, int source_id, int target_id) {
  * \param graph The input graph.
  */
 void free_graph(Graph *graph) {
-  for (int i = 0; i < graph->vcount; i++) {
+  for (long long int i = 0; i < graph->vcount; i++) {
    if (graph->vs[i].in_degree > 0) free(graph->vs[i].in_edges);
    if (graph->vs[i].out_degree > 0) free(graph->vs[i].out_edges);
    }
