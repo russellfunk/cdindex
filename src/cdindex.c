@@ -52,7 +52,7 @@ double cdindex(Graph *graph, long long int id, long long int time_delta){
      for (long long int j = 0; j < graph->vs[out_edge_i].in_degree; j++) {
        long long int out_edge_i_in_edge_j = graph->vs[out_edge_i].in_edges[j];
        if (graph->vs[out_edge_i_in_edge_j].timestamp > graph->vs[id].timestamp &&
-           graph->vs[out_edge_i_in_edge_j].timestamp < (graph->vs[id].timestamp + time_delta) &&
+           graph->vs[out_edge_i_in_edge_j].timestamp <= (graph->vs[id].timestamp + time_delta) &&
            !in_int_array(it, it_count, out_edge_i_in_edge_j)) {
          add_to_int_array(&it, it_count, out_edge_i_in_edge_j, true);
          it_count++;
@@ -64,7 +64,7 @@ double cdindex(Graph *graph, long long int id, long long int time_delta){
    for (i = 0; i < graph->vs[id].in_degree; i++) {
      long long int in_edge_i = graph->vs[id].in_edges[i];
      if (graph->vs[in_edge_i].timestamp > graph->vs[id].timestamp &&
-         graph->vs[in_edge_i].timestamp < (graph->vs[id].timestamp + time_delta) &&
+         graph->vs[in_edge_i].timestamp <= (graph->vs[id].timestamp + time_delta) &&
          !in_int_array(it, it_count, in_edge_i)) {
        add_to_int_array(&it, it_count, in_edge_i, true);
        it_count++;
@@ -105,7 +105,7 @@ long long int iindex(Graph *graph, long long int id, long long int time_delta){
    for (long long int i = 0; i < graph->vs[id].in_degree; i++) {
      long long int in_edge_i = graph->vs[id].in_edges[i];
      if (graph->vs[in_edge_i].timestamp > graph->vs[id].timestamp &&
-         graph->vs[in_edge_i].timestamp < (graph->vs[id].timestamp + time_delta)) {
+         graph->vs[in_edge_i].timestamp <= (graph->vs[id].timestamp + time_delta)) {
        mt_count++;
        }
      }
