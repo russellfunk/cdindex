@@ -36,4 +36,4 @@ void free_graph(Graph *graph);
 /* function prototypes for cdindex.c */
 double cdindex(Graph *graph, long long int id, long long int time_delta);
 double mcdindex(Graph *graph, long long int id, long long int time_delta);
-double iindindex(Graph *graph, long long int id, long long int time_delta);
+double iindex(Graph *graph, long long int id, long long int time_delta);
