@@ -4,13 +4,13 @@
 """tests.py: This script runs simple tests on the cdindex module."""
 
 __author__ = "Russell J. Funk"
-__copyright__ = "Copyright (C) 2017"
+__copyright__ = "Copyright (C) 2019"
 
 # built in modules
 import datetime
 
 # custom modules
-import cdindex
+import cdindex.cdindex
 import cdindex._cdindex as _cdindex
 
 # dummy vertices for c module tests
@@ -89,13 +89,13 @@ def c_tests():
     _cdindex.add_edge(graph, source, target)
 
   # examine the graph
-  print "Vertices in graph: %s" % (_cdindex.get_vcount(graph))
-  print "Edges in graph: %s" % (_cdindex.get_ecount(graph))
-  print "Graph sanity: %s" % (_cdindex._is_graph_sane(graph))
+  print("Vertices in graph: %s" % (_cdindex.get_vcount(graph)))
+  print("Edges in graph: %s" % (_cdindex.get_ecount(graph)))
+  print("Graph sanity: %s" % (_cdindex._is_graph_sane(graph)))
 
   # examine properties of a vertices
   for vertex in _cdindex.get_vertices(graph):
-    print ("%s: %-5s | %s: %-15s %s: %-10s %s: %-10s %s at %s: %-20s %s at %s: %-20s %s: %-20s %s: %-20s"
+    print("%s: %-5s | %s: %-15s %s: %-10s %s: %-10s %s at %s: %-20s %s at %s: %-20s %s: %-20s %s: %-20s"
         % ("vertex", vertex,
            "timestamp", _cdindex.get_vertex_timestamp(graph, vertex),
            "in degree", _cdindex.get_vertex_in_degree(graph, vertex),
@@ -121,13 +121,13 @@ def py_tests():
     graph.add_edge(edge["source"], edge["target"])
 
   # examine the graph
-  print "Vertices in graph: %s" % (graph.vcount())
-  print "Edges in graph: %s" % (graph.ecount())
-  print "Graph sanity: %s" % (graph._is_graph_sane())
+  print("Vertices in graph: %s" % (graph.vcount()))
+  print("Edges in graph: %s" % (graph.ecount()))
+  print("Graph sanity: %s" % (graph._is_graph_sane()))
 
   # examine properties of a vertices
   for vertex in graph.vertices():
-    print ("%s: %-5s | %s: %-15s %s: %-10s %s: %-10s %s at %s: %-20s %s at %s: %-20s %s: %-35s %s: %-35s"
+    print("%s: %-5s | %s: %-15s %s: %-10s %s: %-10s %s at %s: %-20s %s at %s: %-20s %s: %-35s %s: %-35s"
         % ("vertex", vertex,
            "timestamp", graph.timestamp(vertex),
            "in degree", graph.in_degree(vertex),
@@ -149,8 +149,8 @@ def main():
   g = cdindex.RandomGraph(generations=(2,3,4,5,6,7,7,9), edge_fraction=1)
   
   # print some information
-  print g.ecount()
-  print g.vcount()
+  print(g.ecount())
+  print(g.vcount())
 
 if __name__ == "__main__":
   main()

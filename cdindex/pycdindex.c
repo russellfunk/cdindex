@@ -19,6 +19,10 @@
 #include <Python.h>
 #include "cdindex.h"
 
+#if PY_MAJOR_VERSION >= 3
+#define PY3K
+#endif
+
 /* Destructor function for Graph */
 static void del_Graph(PyObject *obj) {
   free(PyCapsule_GetPointer(obj,"Graph"));
@@ -352,7 +356,25 @@ static PyMethodDef CDIndexMethods[] = {
 /*******************************************************************************
  * Module initialization function                                              *
  ******************************************************************************/
+
+
+#ifdef PY3K
+static struct PyModuleDef _cdindex =
+{
+    PyModuleDef_HEAD_INIT,
+    "_cdindex", 
+    "",         
+    -1,         
+    CDIndexMethods
+};
+
+PyMODINIT_FUNC PyInit__cdindex(void)
+{
+    return PyModule_Create(&_cdindex);
+}
+#else
 PyMODINIT_FUNC
 init_cdindex(void) {
     (void) Py_InitModule("_cdindex", CDIndexMethods);
 }
+#endif

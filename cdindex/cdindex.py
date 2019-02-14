@@ -4,7 +4,7 @@
 """cdindex.py: This script is an interface for the c extension _cdindex."""
 
 __author__ = "Russell J. Funk"
-__copyright__ = "Copyright (C) 2017"
+__copyright__ = "Copyright (C) 2019"
 
 # built in modules
 import math
@@ -12,10 +12,22 @@ import random
 import itertools
 import os
 
+try:
+  from builtins import int
+except ImportError:
+  from __builtin__ import int
+
 # custom modules
 if "READTHEDOCS" not in os.environ:
-  import _cdindex
-import time_utilities
+  try: 
+    import cdindex._cdindex as _cdindex
+  except ImportError:
+    import _cdindex
+
+try:
+  import cdindex.time_utilities
+except ImportError:
+  import time_utilities
 
 class Graph:
   """Create a graph.
@@ -100,7 +112,7 @@ class Graph:
     else:
       self._vertex_name_crosswalk[name] = vertex_id
       self._vertex_id_crosswalk[vertex_id] = name
-    if isinstance(t, (long, int)) is False:
+    if isinstance(t, (int)) is False:
       raise ValueError("Time (t) of vertex must be an integer or long")
 
     # add the vertex
@@ -309,7 +321,7 @@ class Graph:
     double
       The CD index.
     """
-    if isinstance(t_delta, (long, int)) is False:
+    if isinstance(t_delta, (int)) is False:
       raise ValueError("Time delta (t_delta) must be an integer or long")
     return _cdindex.cdindex(self._graph,
                             self._vertex_name_crosswalk[name],
@@ -333,7 +345,7 @@ class Graph:
     double
       The mCD index.
     """
-    if isinstance(t_delta, (long, int)) is False:
+    if isinstance(t_delta, (int)) is False:
       raise ValueError("Time delta (t_delta) must be an integer or long")
     return _cdindex.mcdindex(self._graph,
                              self._vertex_name_crosswalk[name],
@@ -357,7 +369,7 @@ class Graph:
     double
       The I index.
     """
-    if isinstance(t_delta, (long, int)) is False:
+    if isinstance(t_delta, (int)) is False:
       raise ValueError("Time delta (t_delta) must be an integer or long")
     return _cdindex.iindex(self._graph,
                              self._vertex_name_crosswalk[name],
