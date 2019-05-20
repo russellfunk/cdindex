@@ -62,6 +62,9 @@ static PyObject *py_is_graph_sane(PyObject *self, PyObject *args) {
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("O", is_graph_sane(g) ? Py_True : Py_False);
 }
 
@@ -77,6 +80,8 @@ static PyObject *py_free_graph(PyObject *self, PyObject *args) {
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
+  // clean up
+  Py_DECREF(py_g);
   free_graph(g);
 
   return Py_BuildValue("");
@@ -97,6 +102,10 @@ static PyObject *py_add_vertex(PyObject *self, PyObject *args) {
     return NULL;
 
   add_vertex(g, ID, TIMESTAMP);
+
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("");
 }
 
@@ -114,6 +123,10 @@ static PyObject *py_add_edge(PyObject *self, PyObject *args) {
     return NULL;
 
   add_edge(g, SOURCE_ID, TARGET_ID);
+
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("");
 }
 
@@ -129,6 +142,9 @@ static PyObject *py_get_vcount(PyObject *self, PyObject *args) {
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
+
+  // clean up
+  Py_DECREF(py_g);
 
   return Py_BuildValue("L", g->vcount);
 }
@@ -153,6 +169,10 @@ static PyObject *py_get_vertices(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, id);
   }
 
+  // clean up
+  Py_DECREF(py_g);
+  Py_DECREF(id);
+
   return Py_BuildValue("O", vs_list);
 }
 
@@ -168,6 +188,9 @@ static PyObject *py_get_ecount(PyObject *self, PyObject *args) {
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
+
+  // clean up
+  Py_DECREF(py_g);
 
   return Py_BuildValue("L", g->ecount);
 }
@@ -186,6 +209,9 @@ static PyObject *py_get_vertex_timestamp(PyObject *self, PyObject *args) {
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
 
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("L", g->vs[ID].timestamp);
 }
 
@@ -202,6 +228,9 @@ static PyObject *py_get_vertex_in_degree(PyObject *self, PyObject *args) {
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
+
+  // clean up
+  Py_DECREF(py_g);
 
   return Py_BuildValue("L", g->vs[ID].in_degree);
 }
@@ -227,6 +256,11 @@ static PyObject *py_get_vertex_in_edges(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, source_id);
   }
 
+  // clean up
+  Py_DECREF(py_g);
+  Py_DECREF(source_id);
+  Py_DECREF(vs_list);
+
   return Py_BuildValue("O", vs_list);
 }
 
@@ -243,6 +277,9 @@ static PyObject *py_get_vertex_out_degree(PyObject *self, PyObject *args) {
     return NULL;
   if (!(g = PyGraph_AsGraph(py_g)))
     return NULL;
+
+  // clean up
+  Py_DECREF(py_g);
 
   return Py_BuildValue("L", g->vs[ID].out_degree);
 }
@@ -268,6 +305,11 @@ static PyObject *py_get_vertex_out_edges(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, target_id);
   }
 
+  // clean up
+  Py_DECREF(py_g);
+  Py_DECREF(target_id);
+  Py_DECREF(vs_list);
+
   return Py_BuildValue("O", vs_list);
 }
 
@@ -288,6 +330,10 @@ static PyObject *py_cdindex(PyObject *self, PyObject *args) {
     return NULL;
 
   result = cdindex(g, ID, TIMESTAMP);
+  
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("d", result);
 }
 
@@ -307,6 +353,10 @@ static PyObject *py_mcdindex(PyObject *self, PyObject *args) {
     return NULL;
 
   result = mcdindex(g, ID, TIMESTAMP);
+  
+  // clean up
+  Py_DECREF(py_g);
+  
   return Py_BuildValue("d", result);
 }
 
@@ -326,6 +376,10 @@ static PyObject *py_iindex(PyObject *self, PyObject *args) {
     return NULL;
 
   result = iindex(g, ID, TIMESTAMP);
+  
+  // clean up
+  Py_DECREF(py_g);
+
   return Py_BuildValue("d", result);
 }
 
