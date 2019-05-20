@@ -10,7 +10,7 @@ __copyright__ = "Copyright (C) 2019"
 from setuptools import setup, Extension, find_packages
 
 setup(name="cdindex",
-    version="1.0.14",
+    version="1.0.15",
     description="Package for computing the cdindex.",
     author="Russell J. Funk",
     author_email="russellfunk@gmail.com",
