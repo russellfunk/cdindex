@@ -1,2 +1,0 @@
-graft src
-global-exclude .DS_Store
