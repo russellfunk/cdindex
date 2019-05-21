@@ -323,9 +323,13 @@ class Graph:
     """
     if isinstance(t_delta, (int)) is False:
       raise ValueError("Time delta (t_delta) must be an integer or long")
-    return _cdindex.cdindex(self._graph,
-                            self._vertex_name_crosswalk[name],
-                            t_delta)
+    result = _cdindex.cdindex(self._graph,
+                              self._vertex_name_crosswalk[name],
+                              t_delta)
+    if math.isnan(result):
+      return None
+    else:
+      return result
 
   def mcdindex(self, name, t_delta):
     """Compute the mCD index.
@@ -347,9 +351,14 @@ class Graph:
     """
     if isinstance(t_delta, (int)) is False:
       raise ValueError("Time delta (t_delta) must be an integer or long")
-    return _cdindex.mcdindex(self._graph,
-                             self._vertex_name_crosswalk[name],
-                             t_delta)
+    
+    result = _cdindex.mcdindex(self._graph,
+                               self._vertex_name_crosswalk[name],
+                               t_delta)
+    if math.isnan(result):
+      return None
+    else:
+      return result
 
   def iindex(self, name, t_delta):
     """Compute the I index.
@@ -374,7 +383,6 @@ class Graph:
     return _cdindex.iindex(self._graph,
                              self._vertex_name_crosswalk[name],
                              t_delta)
-
 
   def _is_graph_sane(self):
     """Test graph sanity.

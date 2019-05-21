@@ -25,6 +25,7 @@
 
 /* Destructor function for Graph */
 static void del_Graph(PyObject *obj) {
+  free_graph(PyCapsule_GetPointer(obj,"Graph"));
   free(PyCapsule_GetPointer(obj,"Graph"));
 }
 
@@ -63,24 +64,6 @@ static PyObject *py_is_graph_sane(PyObject *self, PyObject *args) {
     return NULL;
 
   return Py_BuildValue("O", is_graph_sane(g) ? Py_True : Py_False);
-}
-
-/*******************************************************************************
- * Free memory used by graph                                                   *
- ******************************************************************************/
-static PyObject *py_free_graph(PyObject *self, PyObject *args) {
-  Graph *g;
-  PyObject *py_g;
-
-  if (!PyArg_ParseTuple(args,"O",&py_g))
-    return NULL;
-  if (!(g = PyGraph_AsGraph(py_g)))
-    return NULL;
-
-  // clean up
-  free_graph(g);
-
-  return Py_BuildValue("");
 }
 
 /*******************************************************************************
@@ -142,7 +125,7 @@ static PyObject *py_get_vcount(PyObject *self, PyObject *args) {
 static PyObject *py_get_vertices(PyObject *self, PyObject *args) {
 
   Graph *g;
-  PyObject *py_g, *id;
+  PyObject *py_g, *id, *result;
 
   if (!PyArg_ParseTuple(args,"O",&py_g))
     return NULL;
@@ -156,7 +139,12 @@ static PyObject *py_get_vertices(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, id);
   }
 
-  return Py_BuildValue("O", vs_list);
+  result = Py_BuildValue("O", vs_list);
+
+  // clean up 
+  Py_DECREF(vs_list);
+
+  return result;
 }
 
 /*******************************************************************************
@@ -216,7 +204,7 @@ static PyObject *py_get_vertex_in_edges(PyObject *self, PyObject *args) {
 
   long long int ID;
   Graph *g;
-  PyObject *py_g, *source_id;
+  PyObject *py_g, *source_id, *result;
 
   if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
@@ -230,7 +218,12 @@ static PyObject *py_get_vertex_in_edges(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, source_id);
   }
 
-  return Py_BuildValue("O", vs_list);
+  result = Py_BuildValue("O", vs_list);
+
+  // clean up 
+  Py_DECREF(vs_list);
+
+  return result;
 }
 
 /*******************************************************************************
@@ -257,7 +250,7 @@ static PyObject *py_get_vertex_out_edges(PyObject *self, PyObject *args) {
 
   long long int ID;
   Graph *g;
-  PyObject *py_g, *target_id;
+  PyObject *py_g, *target_id, *result;
 
   if (!PyArg_ParseTuple(args,"OL",&py_g, &ID))
     return NULL;
@@ -271,7 +264,12 @@ static PyObject *py_get_vertex_out_edges(PyObject *self, PyObject *args) {
     PyList_SetItem(vs_list, i, target_id);
   }
 
-  return Py_BuildValue("O", vs_list);
+  result = Py_BuildValue("O", vs_list);
+
+  // clean up 
+  Py_DECREF(vs_list);
+
+  return result;
 }
 
 /*******************************************************************************
@@ -341,7 +339,6 @@ static PyObject *py_iindex(PyObject *self, PyObject *args) {
  ******************************************************************************/
 static PyMethodDef CDIndexMethods[] = {
   {"Graph",  py_Graph, METH_VARARGS, "Make a graph"},
-  {"_free_graph", py_free_graph, METH_VARARGS, "Free memory used by graph"},
   {"_is_graph_sane", py_is_graph_sane, METH_VARARGS, "Test graph sanity"},
   {"add_vertex", py_add_vertex, METH_VARARGS, "Add a vertex to a graph"},
   {"add_edge", py_add_edge, METH_VARARGS, "Add an edge to a graph"},
