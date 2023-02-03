@@ -81,4 +81,12 @@ License
 
 Released under the GNU General Public License (GPL) (see `LICENSE`)::
 
-   Copyright (C) 2017 Russell J. Funk <russellfunk@gmail.com>
+   Copyright (C) 2023 Russell J. Funk <russellfunk@gmail.com>
+   
+Other implementations
+---------------------
+
+Below is a list of other (known) implementations of the cdindex. Please contact us if you know of others.
+
+* novelpy (https://novelpy.readthedocs.io/en/latest/index.html)
+* fast-cdindex (https://github.com/dspinellis/fast-cdindex)
