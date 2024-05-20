@@ -4,7 +4,7 @@
 """tests.py: This script runs simple tests on the cdindex module."""
 
 __author__ = "Russell J. Funk"
-__copyright__ = "Copyright (C) 2019"
+__copyright__ = "Copyright (C) 2024"
 
 # built in modules
 import datetime
@@ -70,8 +70,8 @@ pyedges = [{"source": "4Z", "target": "2Z"},
            {"source": "10Z", "target": "4Z"}]
 
 # test time
-TEST_TIME = 157680000
-TEST_TIME_PY = datetime.timedelta(days=1825)
+TEST_TIME = 157852800
+TEST_TIME_PY = datetime.timedelta(days=1827)
 
 # tests for the c extension
 def c_tests():

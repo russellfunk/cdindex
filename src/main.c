@@ -70,10 +70,10 @@ int main() {
     printf("Testing graph sanity: %s\n", is_graph_sane(&g) ? "PASS" : "FAIL");
 
   /* compute cdindex measure */
-  printf("CD index: %f\n", cdindex(&g, 4, 157680000));
+  printf("CD index: %f\n", cdindex(&g, 4, 157852800));
 
   /* compute mcdindex measure */
-  printf("mCD index: %f\n", mcdindex(&g, 4, 157680000));
+  printf("mCD index: %f\n", mcdindex(&g, 4, 157852800));
 
   /* free memory use by the graph */
   free_graph(&g);

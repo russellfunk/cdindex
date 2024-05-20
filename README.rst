@@ -26,6 +26,13 @@ Create a graph with some dummy data and compute the CD index::
 
     >>> import cdindex
     >>> import datetime
+    >>> from dateutil.relativedelta import relativedelta
+
+    >>> def get_t_delta(vertex, years):
+          vertex_datetime = cdindex.datetime_from_timestamp(graph.timestamp(vertex))
+          future_datetime = vertex_datetime + relativedelta(years=years)
+          difference = future_datetime - vertex_datetime
+          return int(difference.total_seconds())
 
     >>> # dummy vertices for python module tests
     >>> pyvertices= [{"name": "0Z", "time": datetime.datetime(1992, 1, 1)},
@@ -67,9 +74,9 @@ Create a graph with some dummy data and compute the CD index::
     >>> for edge in pyedges:
           graph.add_edge(edge["source"], edge["target"])
 
-    >>> graph.cdindex("4Z", int(datetime.timedelta(days=1825).total_seconds()))
+    >>> graph.cdindex("4Z", get_t_delta("4Z", years=5))
 
-    >>> graph.mcdindex("4Z", int(datetime.timedelta(days=1825).total_seconds()))
+    >>> graph.mcdindex("4Z", get_t_delta("4Z", years=5))
 
 Bugs
 ----
@@ -81,7 +88,7 @@ License
 
 Released under the GNU General Public License (GPL) (see `LICENSE`)::
 
-   Copyright (C) 2023 Russell J. Funk <russellfunk@gmail.com>
+   Copyright (C) 2024 Russell J. Funk <russellfunk@gmail.com>
    
 Other implementations
 ---------------------
